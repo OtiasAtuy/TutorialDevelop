@@ -1,6 +1,7 @@
 package com.techacademy.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // 追加
@@ -36,4 +37,13 @@ public class UserService {
         return userRepository.save(user);
     }
     // ----- Chapter7 追加:ここまで -----
+
+    // ----- Chapter9 追加:ここから -----
+    @Transactional
+    public void deleteUser(Set<Integer> idck) {
+        for(Integer id : idck) {
+            userRepository.deleteById(id);
+        }
+    }
+    // ----- Chapter9 追加:ここまで -----
 }
