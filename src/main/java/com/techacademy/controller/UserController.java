@@ -59,16 +59,26 @@ public class UserController {
     // ----- Chapter8 追加:ここから -----
     /** User更新画面を表示 */
     @GetMapping("/update/{id}/")
-    public String getUser(@PathVariable("id") Integer id, Model model) {
-        // Modelに登録
-        model.addAttribute("user", service.getUser(id));
+    public String getUser(@PathVariable(value = "id", required = false) Integer id, Model model) {
+        if(id  != null) {
+            // 一覧画面から遷移。Modelにはサービスから取得したUserをセットする。
+            model.addAttribute("user", service.getUser(id));
+        } else {
+            // postUser()から遷移。ModelにはpostUser()から渡された引数のuserをセットする。
+            model.addAttribute("user", model.getAttribute("user"));
+        }
+
         // User更新画面に遷移
         return "user/update";
     }
 
     /** User更新処理 */
     @PostMapping("/update/{id}/")
-    public String postUser(User user) {
+    public String postUser(@Validated User user, BindingResult res, Model model) {
+        if(res.hasErrors()) {
+            // エラーありの場合、idをnullにしてgetUserを呼び出し、postUserからの遷移と判断させる
+            return getUser(null, model);
+        }
         // User登録
         service.saveUser(user);
         // 一覧画面にリダイレクト
